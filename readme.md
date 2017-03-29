@@ -33,7 +33,7 @@ Once installed, configured and authorized you can output [your images](https://w
 
 use the Kirby-Tag
 ```
-(instagramapi: mykirbyusername endpoint: media/recent snippet: ia-example-media)
+(instagramapi: mykirbyusername endpoint: users/self/media/recent snippet: ia-example-media)
 ```
 
 or plain php
