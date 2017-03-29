@@ -18,7 +18,7 @@ Be aware that using the Instagram API has [rate limits](https://www.instagram.co
 
 - access [Instagram API Endpoints](https://www.instagram.com/developer/endpoints/)
 - use `snippets` to customize the output
-- simply extend existing Kibry CMS User-Accounts with [Kirby User Roles](https://getkirby.com/docs/panel/roles)
+- simply extend existing Kirby CMS User-Accounts with [Kirby User Roles](https://getkirby.com/docs/panel/roles)
 - includes helper to cache images
 
 ## Requirements
@@ -33,7 +33,7 @@ Once installed, configured and authorized you can output your images like this:
 
 use the Kirby-Tag
 ```
-(instagramapi: myusername endpoint: media/recent snippet:ia-example-media)
+(instagramapi: myusername endpoint: media/recent snippet: ia-example-media)
 ```
 
 or plain php
@@ -112,25 +112,24 @@ fields:
 2. Then send the email with the Authorization Link using the Button at the Users Panel View. 
 3. Open the email and authorize. The data will be stored at the user account and the user will get a second verification email containing a backup of that data.
 
-You can define your own subject and body-snippet for both emails using setting and `snippets` – see settings below.
+You can define your own subject and body-snippet for both emails using settings and `snippets` – see settings below.
 
 ### Example: Using a Tag with Snippet show to Most-Recent-Media
 
-See `snippet` [ia-example-media](https://github.com/bnomei/kirby-instagram-api/blob/master/snippets/ia-example-media.php).
-
 ```
-(instagramapi: myusername endpoint: media/recent snippet:ia-example-media)
+(instagramapi: myusername endpoint: media/recent snippet: ia-example-media)
 ```
 
-If you use the same snippet or endpoint everytime consider setting a default in your `site/config/config.php` instead.
+If you use the same snippet or endpoint everytime consider setting a default in your `site/config/config.php`.
 
 ```php
 c::set('plugin.instagram-api.tag.endpoint', 'media/recent');
 c::set('plugin.instagram-api.tag.snippet', 'ia-example-media');
 ```
 
+This simplyfies the Kirby-Tag call to:
+
 ```
-using default snippet now...
 (instagramapi: myusername)
 ```
 
@@ -139,12 +138,15 @@ using default snippet now...
 See `snippet` [ia-example-media](https://github.com/bnomei/kirby-instagram-api/blob/master/snippets/ia-example-media.php).
 
 ```php
+snippet('ia-example-media');
+
+// or if you want to override the defaults
 snippet('ia-example-media', ['user'=>'myusername', 'endpoint'=>'media/recent']);
 ```
 
-### Page and Site Method
+### Example Page and Site Method
 
-Of course you can use the Page or Site Methods directly. But take a look at the [example](https://github.com/bnomei/kirby-instagram-api/blob/master/snippets/ia-example-media.php) how to parse the result.
+Of course you can use the Page or Site Methods directly. Take a look at the [example](https://github.com/bnomei/kirby-instagram-api/blob/master/snippets/ia-example-media.php) how to setup user, endpoint and parse the result.
 
 ## Other Setting
 
@@ -155,8 +157,10 @@ You can set these in your `site/config/config.php`.
 - add your license here and the widget reminding you to buy one will disappear from the Panel.
 
 ### plugin.instagram-api.client-id
+- get it from [Instagram Deverloper](https://www.instagram.com/developer/clients/manage/)
 
 ### plugin.instagram-api.client-secret
+- get it from [Instagram Deverloper](https://www.instagram.com/developer/clients/manage/)
 
 ### plugin.instagram-api.tag.endpoint
 - default: ''
@@ -175,14 +179,13 @@ c::set('plugin.instagram-api.tag.snippet', 'ia-example-media');
 ```
 
 ### plugin.instagram-api.email.from
-- default: email.from or `site()->user()->email()`
+- default: email.from or **it might fail**
 
 ### plugin.instagram-api.email-request.subject
 - default: email.subject or 'Kirby CMS InstagramAPI Plugin: Authorization Email'
 
 ### plugin.instagram-api.email-request.body-snippet
 - default: instagramapi-email-request-body
-
 
 ### plugin.instagram-api.email-success.subject
 - default: email.subject or 'Kirby CMS InstagramAPI Plugin: Authorization Email'
@@ -192,7 +195,7 @@ c::set('plugin.instagram-api.tag.snippet', 'ia-example-media');
 
 ### plugin.instagram-api.service
 - default: email.service or `instagramapi-html`
-- use simple html email service provided by this plugin or set your own [email service](https://getkirby.com/docs/developer-guide/advanced/emails)
+- use the html email service provided by this plugin or set your own [email service](https://getkirby.com/docs/developer-guide/advanced/emails)
 
 ## Disclaimer
 
