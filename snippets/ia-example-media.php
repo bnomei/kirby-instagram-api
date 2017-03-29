@@ -43,7 +43,7 @@
 	
 	/////////////////////////////////////
 	// sneak peak? uncomment the following line
-	a::show($result);
+	// a::show($result);
 
 	// always check if request returned valid data 
 	if(gettype($result) == 'array' && a::get($result, 'data')) {
