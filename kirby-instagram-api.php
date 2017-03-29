@@ -292,7 +292,6 @@ $kirby->set('route',
                     'user'        => $user, 
                     'account'     => trim($json->user->username),
                     'data'        => $account_ID_Token,
-                    'sendername'  => $senderemail,
                   ],true),
                 'service' => c::get('plugin.instagram-api.service', c::get('email.service', 'instagramapi-html')),
                 ]);
@@ -354,11 +353,9 @@ $kirby->set('route',
           }
 
           // sender
-          $sender = site()->user();
-          $sendername = $sender->firstname() .' '. $sender->lastname();
-          if(strlen(trim($sendername)) == 0) $sendername = $sender->username();
-          $senderemail = c::get('plugin.instagram-api.email.from', c::get('email.from', $sender->email()));
-          if(!$sender || !v::email($senderemail)) {
+          $senderemail = c::get('plugin.instagram-api.email.from', c::get('email.from'), $user->email());
+
+          if(!v::email($senderemail)) {
             $success = false;
             $message = 'Sender or Sender-Email invalid. ';
           }
@@ -397,7 +394,6 @@ $kirby->set('route',
                     'user'        => $user, 
                     //'account'     => $account,
                     'link'        => $link,
-                    'sendername'  => $sendername,
                   ],true),
                 'service' => c::get('plugin.instagram-api.service', c::get('email.service', 'instagramapi-html')),
                 ]);

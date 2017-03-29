@@ -1,5 +1,5 @@
 <?php
-	// SNIPPET: $user - Object, $link, $sendername
+	// SNIPPET: $user - Object, $link
 
 	$username = $user->firstname() .' '. $user->lastname();
     if(strlen(trim($username)) == 0) {
@@ -16,5 +16,5 @@
 
 <p>Sincerly yours,<br>
 <br>
-<?= $sendername ?>
+Kirby CMS Instagram API Robot
 </p>

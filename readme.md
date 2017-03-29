@@ -4,21 +4,21 @@
 
 Kirby CMS User-Field, Tag and Page Method to access Instagram API Endpoints. This is a boilerplate to create your own Instagram embeds.
 
-Use this plugin to simplify secured api authorisation to a few clicks and show your Instagram images and their metadata within your awesome layout without any [embed codes](https://help.instagram.com/513918941996087).
+Use this plugin to simplify the secured api authorisation to a few clicks and show your Instagram images and metadata without any [fixed styling embed codes](https://help.instagram.com/513918941996087).
 
-**NOTE:** This is not a free plugin. In order to use it on a production server, you need to buy a license. For details on Kirby InstagramAPI's license model, scroll down to the License section of this document.
-
-This is not an [Embed Code Plugin](https://www.instagram.com/developer/embedding/) but grants you access to all [API Endpoints](https://www.instagram.com/developer/endpoints/), works without implicit OAuth and can use [Signed Requests](https://www.instagram.com/developer/secure-api-requests/). 
+This is not an [Embed Code Plugin](https://www.instagram.com/developer/embedding/) but grants you access to all [API Endpoints](https://www.instagram.com/developer/endpoints/). It works without implicit OAuth and can use [Signed Requests](https://www.instagram.com/developer/secure-api-requests/). 
 
 You will have to parse the result of the endpoint to generate your html-elements using `snippets` – [see example](https://github.com/bnomei/kirby-instagram-api/blob/master/snippets/ia-example-media.php).
 
 Be aware that using the Instagram API has [rate limits](https://www.instagram.com/developer/limits/).
 
+**NOTE:** This is not a free plugin. In order to use it on a production server, you need to buy a license. For details on Kirby InstagramAPI's license model, scroll down to the License section of this document.
+
 ## Key Features
 
 - access [Instagram API Endpoints](https://www.instagram.com/developer/endpoints/)
 - use `snippets` to customize the output
-- just a new field for Users with simple integration using [Kirby User Roles](https://getkirby.com/docs/panel/roles)
+- simply extend existing Kibry CMS User-Accounts with [Kirby User Roles](https://getkirby.com/docs/panel/roles)
 - includes helper to cache images
 
 ## Requirements
@@ -26,6 +26,25 @@ Be aware that using the Instagram API has [rate limits](https://www.instagram.co
 - [**Kirby**](https://getkirby.com/) 2.3+
 - [Instagram Client ID and Secret](https://www.instagram.com/developer/clients/manage/)
 - [PHP Extension PECL hash >= 1.1](http://php.net/manual/en/function.hash-hmac.php)
+
+
+## Quick Tour
+Once installed, configured and authorized you can output your images like this:
+
+use the Kirby-Tag
+```
+(instagramapi: myusername endpoint: media/recent snippet:ia-example-media)
+```
+
+or plain php
+```php
+// snippet
+snippet('ia-example-media', ['user'=>'myusername', 'endpoint'=>'media/recent']);
+
+// page or site methods
+$result = $page->instagramapi('myusername', 'media/recent');
+foreach($result['data'] as $data) { /*...*/ }
+```
 
 ## Installation
 
@@ -50,7 +69,7 @@ $ git submodule add https://github.com/bnomei/kirby-instagram-api.git site/plugi
 
 ### Create Client ID and Secret
 
-Create a new Client and get [Instagram Client ID and Secret](https://www.instagram.com/developer/clients/manage/) and set them in your `/site/config/config.php`. Keep them save!
+Create a new Client and get [Instagram Client ID and Secret](https://www.instagram.com/developer/clients/manage/) and set them in your `/site/config/config.php`.
 
 ```php
 c::set('plugin.instagram-api.client-id', 'YOUR_CLIENT_ID_HERE');
@@ -64,14 +83,14 @@ Setup Client **Security** with *Valid redirect URIs, Disabling Implicit OAuth an
 Make sure to attach **kirby-instagram-api/redirect** to your redirect URI or it will not work. Also verify protocol.
 
 ```
-Still at HTTP?
+HTTP?
 http://YOUR_REDIRECT_URI_HERE/kirby-instagram-api/redirect
 
-Or are you using HTTPS?
+Or HTTPS?
 https://YOUR_REDIRECT_URI_HERE/kirby-instagram-api/redirect
 ```
 
-If you are using https consider setting the [option to enforce this in the Panel](https://getkirby.com/docs/cheatsheet/options/ssl) as well as in Kirby.
+If you are using `https` consider setting the [option to enforce this in the Panel](https://getkirby.com/docs/cheatsheet/options/ssl) as well as in Kirby.
 
 ### Setup Instagram Sandbox
 
@@ -79,7 +98,7 @@ Unless you intend to go live with your *Instagram App* right away you need to ad
 
 ### Add Field to Role Blueprint
 
-Add the `instagramapi` field by [extending a role blueprint](https://getkirby.com/docs/panel/users#custom-user-form-fields).
+Add the `instagramapi` field by [extending a role blueprint](https://getkirby.com/docs/panel/users#custom-user-form-fields) to existing user accounts.
 
 ```yaml
 # site/blueprints/users/admin.yml
@@ -89,10 +108,11 @@ fields:
 
 ### Send the Authorize Link
 
-Before triggering any emails make sure you sender is correct by setting either `plugin.instagram-api.email.from` or `email.from`. Sending email might not work on `localhost` since only [Kirby's email() helper](https://getkirby.com/docs/cheatsheet/helpers/email) is used.
+1. Before triggering any emails make sure you sending email is correct by setting either `plugin.instagram-api.email.from` or `email.from`. Sending emails might not work on `localhost` since [Kirby's email() helper](https://getkirby.com/docs/cheatsheet/helpers/email) is used.
+2. Then send the email with the Authorization Link using the Button at the Users Panel View. 
+3. Open the email and authorize. The data will be stored at the user account and the user will get a second verification email containing a backup of that data.
 
-- Then send the email with the Authorization Link using the Button at the Users Panel View. 
-- Open the email and authorize. The user will get a second verification email containing a backup of the data.
+You can define your own subject and body-snippet for both emails using setting and `snippets` – see settings below.
 
 ### Example: Using a Tag with Snippet show to Most-Recent-Media
 
@@ -119,7 +139,7 @@ using default snippet now...
 See `snippet` [ia-example-media](https://github.com/bnomei/kirby-instagram-api/blob/master/snippets/ia-example-media.php).
 
 ```php
-snippet('ia-example-media', ['user' => site()->user()])
+snippet('ia-example-media', ['user'=>'myusername', 'endpoint'=>'media/recent']);
 ```
 
 ### Page and Site Method
