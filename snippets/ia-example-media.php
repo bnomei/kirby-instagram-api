@@ -31,7 +31,7 @@
 		}
 
 		if(!isset($endpoint)) {
-			$endpoint = 'media/recent';
+			$endpoint = 'users/self/media/recent';
 		}
 
 		// request endpoint

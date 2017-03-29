@@ -63,9 +63,9 @@ function instagramapi($user, $endpoint, $snippet = '', $params = []) {
   // ENDPOINT
   if(gettype($endpoint) != 'string' || strlen(trim($endpoint)) <= 1) return 'Invalid Endpoint.';
   $endpoint = trim($endpoint);
+  $endpoint = rtrim($endpoint,'/');
   if(substr($endpoint, 0, 1) != '/') $endpoint = '/'.$endpoint;
-  if(substr($endpoint, -1) != '/') $endpoint = $endpoint.'/';
-
+  
   // PARAMS
   if(!$params || gettype($params) != 'array') {
     $params = array();
@@ -94,30 +94,33 @@ function instagramapi($user, $endpoint, $snippet = '', $params = []) {
     return 'Invalid User.';
   }
 
+  // PARAMS
   $params = array_merge($params, ['access_token' => $userInstagram['token']]);
-  $sig = instagramapi_generate_sig($endpoint, $params, $secret);
-  if(!$sig) {
-    return 'hash_hmac algo sha256 unknown.';
-  } else if(c::get('plugin.instagram-api.signedrequests', false)) {
-    $sig = "&sig=".$sig;
-  } else {
-    $sig = ' ';
+  
+  $url  = [
+    c::get('plugin.instagram-api.endpoint-root', 'https://api.instagram.com/v1'),
+    $endpoint,
+    "?access_token=".$userInstagram['token']
+  ];
+  foreach ($params as $key => $value) {
+    $url[] = '&'.trim($key).'='.$value;
   }
 
-  $url  = [
-    c::get('plugin.instagram-api.endpoint-root', "https://api.instagram.com/v1"),
-    "/users/".$userInstagram['userid'],
-    $endpoint,
-    "?access_token=".$userInstagram['token'],
-    $sig,
-  ];
+  // SIGNED REQUEST
+  if(c::get('plugin.instagram-api.signedrequests', true)) {
+    $sig = instagramapi_generate_sig($endpoint, $params, $secret);
+    if(!$sig) {
+      return 'hash_hmac algo sha256 unknown.';
+    } else {
+       $url[] = '&sig='.$sig;
+    }
+  }
+
   $url = trim(implode('', $url));
 
   $resp = instagramapi_simpleCurl($url);  
   if($resp !== false && instagramapi_isJSON($resp)) {
     $json = json_decode($resp, c::get('plugin.instagram-api.json_decode.assoc', true));
-
-    //a::show($json);
 
     // CATCH ERRORS or return JSON as array
     if($meta = a::get($json, 'meta')) {
@@ -410,7 +413,7 @@ $kirby->set('route',
           }
 
           $json = [
-            'message' => (!r::ajax()?'@ ':'') . trim($message),
+            'message' => trim($message),
             'code' => $success ? 200 : 400,
           ];
 
@@ -442,7 +445,7 @@ $kirby->set('site::method', 'instagramapiCacheImageToThumbs',
     $imgurl
     ) {
 
-    $imgurlHash = md5($imgurl).'.'.f::extension($imgurl);
+    $imgurlHash = md5($imgurl) . '.' . f::extension($imgurl);
     $imgCachePath = kirby()->roots()->thumbs() . DS .$imgurlHash;
     $imgCacheURL = kirby()->urls()->thumbs() . '/' . $imgurlHash;
     $cachedImage = null;

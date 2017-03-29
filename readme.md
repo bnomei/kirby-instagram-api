@@ -29,7 +29,7 @@ Be aware that using the Instagram API has [rate limits](https://www.instagram.co
 
 
 ## Quick Tour
-Once installed, configured and authorized you can output your images like this:
+Once installed, configured and authorized you can output [your images](https://www.instagram.com/developer/endpoints/users/#get_users_media_recent_self) like this:
 
 use the Kirby-Tag
 ```
@@ -39,10 +39,10 @@ use the Kirby-Tag
 or plain php
 ```php
 // snippet
-snippet('ia-example-media', ['user'=>'myusername', 'endpoint'=>'media/recent']);
+snippet('ia-example-media', ['user'=>'myusername', 'endpoint'=>'users/self/media/recent']);
 
 // page or site methods
-$result = $page->instagramapi('myusername', 'media/recent');
+$result = $page->instagramapi('myusername', 'users/self/media/recent');
 foreach($result['data'] as $data) { /*...*/ }
 ```
 
@@ -117,13 +117,13 @@ You can define your own subject and body-snippet for both emails using settings 
 ### Example: Using a Tag with Snippet show to Most-Recent-Media
 
 ```
-(instagramapi: myusername endpoint: media/recent snippet: ia-example-media)
+(instagramapi: myusername endpoint: users/self/media/recent snippet: ia-example-media)
 ```
 
 If you use the same snippet or endpoint everytime consider setting a default in your `site/config/config.php`.
 
 ```php
-c::set('plugin.instagram-api.tag.endpoint', 'media/recent');
+c::set('plugin.instagram-api.tag.endpoint', 'users/self/media/recent');
 c::set('plugin.instagram-api.tag.snippet', 'ia-example-media');
 ```
 
@@ -141,7 +141,7 @@ See `snippet` [ia-example-media](https://github.com/bnomei/kirby-instagram-api/b
 snippet('ia-example-media');
 
 // or if you want to override the defaults
-snippet('ia-example-media', ['user'=>'myusername', 'endpoint'=>'media/recent']);
+snippet('ia-example-media', ['user'=>'myusername', 'endpoint'=>'users/self/media/recent']);
 ```
 
 ### Example Page and Site Method
@@ -167,7 +167,7 @@ You can set these in your `site/config/config.php`.
 - set this if you want to ommit specifying the endpoint in the tag.
 
 ```php
-c::set('plugin.instagram-api.tag.endpoint', 'media/recent');
+c::set('plugin.instagram-api.tag.endpoint', 'users/self/media/recent');
 ```
 
 ### plugin.instagram-api.tag.snippet
