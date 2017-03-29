@@ -207,7 +207,7 @@ I am in no way affiliated with the google map places referenced in this readme a
 
 Kirby InstagramAPI can be evaluated as long as you want on how many private servers you want. To deploy Kirby InstagramAPI on any public server, you need to buy a license. You need one unique license per public server (just like Kirby does). See `license.md` for terms and conditions.
 
-[<img src="https://img.shields.io/badge/%E2%80%BA-Buy%20a%20license-green.svg" alt="Buy a license">](https://bnomei.onfastspring.com/kirby-instagram-api)
+[<img src="https://img.shields.io/badge/%E2%80%BA-Buy%20a%20license-green.svg" alt="Buy a license">](https://bnomei.onfastspring.com/kirby-instagramapi)
 
 However, even with a valid license code, it is discouraged to use it in any project, that promotes racism, sexism, homophobia, animal abuse or any other form of hate-speech.
 
