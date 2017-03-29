@@ -8,7 +8,7 @@ Use this plugin to simplify secured api authorisation to a few clicks and show y
 
 **NOTE:** This is not a free plugin. In order to use it on a production server, you need to buy a license. For details on Kirby InstagramAPI's license model, scroll down to the License section of this document.
 
-This is not an [Embed Code Plugin](https://www.instagram.com/developer/embedding/) but grants you access to all [API Endpoints](https://www.instagram.com/developer/endpoints/), forces you to disable implicit OAuth and use [Signed Requests](https://www.instagram.com/developer/secure-api-requests/). Why? Because it is saver and I like it that way. 
+This is not an [Embed Code Plugin](https://www.instagram.com/developer/embedding/) but grants you access to all [API Endpoints](https://www.instagram.com/developer/endpoints/), works without implicit OAuth and can use [Signed Requests](https://www.instagram.com/developer/secure-api-requests/). 
 
 You will have to parse the result of the endpoint to generate your html-elements using `snippets` – [see example](https://github.com/bnomei/kirby-instagram-api/blob/master/snippets/ia-example-media.php).
 
@@ -19,6 +19,7 @@ Be aware that using the Instagram API has [rate limits](https://www.instagram.co
 - access [Instagram API Endpoints](https://www.instagram.com/developer/endpoints/)
 - use `snippets` to customize the output
 - just a new field for Users with simple integration using [Kirby User Roles](https://getkirby.com/docs/panel/roles)
+- includes helper to cache images
 
 ## Requirements
 

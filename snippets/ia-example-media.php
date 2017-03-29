@@ -56,9 +56,11 @@
 
 			// if you want to cache the image you could
 			// use this helper or write your own based on it
+			/*
 			if($imgMedia = site()->instagramapiCacheImageToThumbs($imgurl)) {
 				$imgurl = $imgMedia->url();
 			}
+			*/
 
 			$img = brick('img')
 				->attr('src', $imgurl)
