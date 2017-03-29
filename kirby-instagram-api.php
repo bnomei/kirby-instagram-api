@@ -253,7 +253,7 @@ $kirby->set('route',
           return go(site()->homepage()->url() . '#error-'.$err);
         }
 
-        $tcheck = sha1(kirby()->roots()->index().date('Ymd').trim($username));
+        $tcheck = sha1(kirby()->roots()->index().date('Ym').trim($username));
         if($timeout != $tcheck) {
           return go(site()->homepage()->url() . '#link-expired');
         }
@@ -392,7 +392,7 @@ $kirby->set('route',
             // https://www.instagram.com/developer/authentication/
             // STEP 1: https://api.instagram.com/oauth/authorize/?client_id=CLIENT-ID&redirect_uri=REDIRECT-URI&response_type=code
 
-            $timeout = sha1(kirby()->roots()->index().date('Ymd').trim($username));
+            $timeout = sha1(kirby()->roots()->index().date('Ym').trim($username));
 
             $redirect = implode([
               site()->url(),
