@@ -1,0 +1,25 @@
+.field[data-field='instagramapidata'] .jquery-hide {
+  display: none; }
+
+.field[data-field='instagramapidata'] .instagramapidata-field {
+  position: relative;
+  margin-bottom: .5em; }
+
+.field[data-field='instagramapidata'] .instagramapidata-button {
+  float: right; }
+
+.field[data-field='instagramapidata'] .instagramapidata-button a .fa {
+  display: none;
+  margin-right: 10px; }
+
+.field[data-field='instagramapidata'] .instagramapidata-button a.btn-positive .fa-check-circle {
+  display: inherit; }
+
+.field[data-field='instagramapidata'] .instagramapidata-button a.btn-negative .fa-exclamation-circle {
+  display: inherit; }
+
+.field[data-field='instagramapidata'].ajax .instagramapidata-button a .fa-spinner {
+  display: inherit; }
+
+.field[data-field='instagramapidata'].ajax .instagramapidata-wrapper {
+  cursor: wait; }

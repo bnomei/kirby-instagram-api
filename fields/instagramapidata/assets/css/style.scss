@@ -1,0 +1,31 @@
+
+.field[data-field='instagramapidata'] {
+	.jquery-hide {
+		display: none;
+	}
+
+	.instagramapidata-field {
+		position: relative;
+		margin-bottom: .5em;
+	}
+
+	.instagramapidata-button {
+		float: right;
+	}
+
+	.instagramapidata-button a {
+		.fa { 
+			display: none; 
+			margin-right: 10px; 
+		}
+		&.btn-positive .fa-check-circle { display: inherit; }
+		&.btn-negative .fa-exclamation-circle { display: inherit; }
+	}
+
+	&.ajax .instagramapidata-button a .fa-spinner {
+		display: inherit;
+	}
+	&.ajax .instagramapidata-wrapper {
+		cursor: wait;
+	}
+}

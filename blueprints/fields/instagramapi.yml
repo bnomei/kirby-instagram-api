@@ -1,0 +1,5 @@
+# Global Field Definition for Instagram API
+type: instagramapidata
+label: Instagram API
+text: Send Authorization-Email
+readonly: true
