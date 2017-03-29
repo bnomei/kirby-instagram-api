@@ -232,14 +232,30 @@ $kirby->set('route',
         // http://your-redirect-uri?code=CODE
         // http://your-redirect-uri?error=access_denied&error_reason=user_denied&error_description=The+user+denied+your+request
         
-        parse_str(parse_url(server::get('request_uri'), PHP_URL_QUERY), $params);
-        $code = a::get($params, 'code');
+        $code = get('code');
+        $username = null;
+        $timeout = null;
 
-        $username = a::get($params, 'u');
+        if($u = get('u')) {
+          $up = explode('---', $u);
+          if(count($up) == 2) {
+            $username = $up[0];
+            $timeout = $up[1];
+          }
+        }
+
         $user = site()->user($username);
-        if(!$username || !$user || !$code || a::get($params, 'error')) {
+        $err = get('error');
+        if(!$username || !$user || !$code || $err != null) {
           //return response::json($params, 400);
-          return go(site()->homepage()->url() . '#invalid-query');
+          if(!$err) $err = 'user-not-found';
+          if(!$code) $err = 'code-missing';
+          return go(site()->homepage()->url() . '#error-'.$err);
+        }
+
+        $tcheck = sha1(kirby()->roots()->index().date('Ymd').trim($username));
+        if($timeout != $tcheck) {
+          return go(site()->homepage()->url() . '#link-expired');
         }
         
         // STEP 3: curl the token
@@ -247,7 +263,7 @@ $kirby->set('route',
         $redirect = implode([
           site()->url(),
           '/kirby-instagram-api/redirect',
-          '?u=' . $username,
+          '?u=' . $username .'---'. $timeout,
         ]);
         $request = [
             'client_id'     => $clientid,
@@ -376,10 +392,12 @@ $kirby->set('route',
             // https://www.instagram.com/developer/authentication/
             // STEP 1: https://api.instagram.com/oauth/authorize/?client_id=CLIENT-ID&redirect_uri=REDIRECT-URI&response_type=code
 
+            $timeout = sha1(kirby()->roots()->index().date('Ymd').trim($username));
+
             $redirect = implode([
               site()->url(),
               '/kirby-instagram-api/redirect',
-              '?u=' . $username,
+              '?u=' . $username .'---'. $timeout,
             ]);
             $link = implode([
               'https://api.instagram.com/oauth/authorize/',
