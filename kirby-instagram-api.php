@@ -73,10 +73,21 @@ function instagramapi($user, $endpoint, $snippet = '', $params = []) {
 
   // USER
   $userInstagram = null;
-  if(!is_a($user, 'User') && gettype($user) == 'string') {
-    $user = site()->user($user);
+  if(is_string($user)) {
+    if(str::contains($user, ' ')) {
+      $iad = explode(' ', $user); // see $account_ID_Token
+      if(count($iad) == 3) {
+        $userInstagram = [
+          'account'   => $iad[0],
+          'userid'    => $iad[1],
+          'token'     => $iad[2],
+          ];
+      }
+    } else {
+      $user = site()->user($user);
+    }
   }
-  if($user) {
+  if(is_a($user, 'User')) {
     if($iad = $user->instagramapi()) {
       $iad = explode(' ', $iad); // see $account_ID_Token
       if(count($iad) == 3) {
@@ -87,11 +98,17 @@ function instagramapi($user, $endpoint, $snippet = '', $params = []) {
           ];
       }
     }
-    if(!$userInstagram) {
-      return 'User is missing Instagram authorization.';
-    }
-  } else {
+  }
+  if(is_array($user)) {
+    $userInstagram = $user;
+  }
+
+  if(!$userInstagram || !is_array($userInstagram)) {
     return 'Invalid User.';
+  }
+  $iamissing = a::missing($userInstagram, ['account','userid','token']);
+  if(count($iamissing) > 0) {
+    return 'Missing Account values.';
   }
 
   // PARAMS

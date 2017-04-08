@@ -19,6 +19,7 @@ Be aware that using the Instagram API has [rate limits](https://www.instagram.co
 - access [Instagram API Endpoints](https://www.instagram.com/developer/endpoints/)
 - use `snippets` to customize the output
 - simply extend existing Kirby CMS User-Accounts with [Kirby User Roles](https://getkirby.com/docs/panel/roles)
+- or use existing userid and token
 - includes helper to cache images
 
 ## Requirements
@@ -127,7 +128,7 @@ c::set('plugin.instagram-api.tag.endpoint', 'users/self/media/recent');
 c::set('plugin.instagram-api.tag.snippet', 'ia-example-media');
 ```
 
-This simplyfies the Kirby-Tag call to:
+This simplifies the Kirby-Tag call to:
 
 ```
 (instagramapi: mykirbyusername)
@@ -147,6 +148,31 @@ snippet('ia-example-media', ['user'=>'mykirbyusername', 'endpoint'=>'users/self/
 ### Example Page and Site Method
 
 Of course you can use the Page or Site Methods directly. Take a look at the [example](https://github.com/bnomei/kirby-instagram-api/blob/master/snippets/ia-example-media.php) how to setup user, endpoint and parse the result.
+
+
+### Use without extending a Kirby User (v0.7+)
+
+If you already have `account`, `userid` and `token` you can use this plugin without its Kirby User Field. Like it was suggested by @olach in [Issue #1](https://github.com/bnomei/kirby-instagram-api/issues/1).
+
+Use the Tag with `space` seperated values. 
+
+```
+(instagramapi: ACCOUNT USERID TOKEN endpoint: users/self/media/recent snippet: ia-example-media)
+```
+
+```php
+// as array
+$logindata = [
+	'account'   => 'ACCOUNT',
+    'userid'    => 'USERID',
+    'token'     => 'TOKEN',
+];
+// or as string
+$logindata = 'ACCOUNT USERID TOKEN';
+$result = $page->instagramapi($logindata, 'users/self/media/recent');
+foreach($result['data'] as $data) { /*...*/ }
+
+```
 
 ## Other Setting
 
