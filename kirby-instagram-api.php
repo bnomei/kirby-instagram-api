@@ -73,7 +73,7 @@ function instagramapi($user, $endpoint, $snippet = '', $params = []) {
 
   // TOKEN
   $userInstagram = null;
-  if(!$user) {
+  if(!$user || strlen(trim($user)) == 0) {
     $user = c::get('plugin.instagram-api.default-token', '');
     if(strlen(trim($user)) == 0) $user = null;
   }
@@ -84,7 +84,7 @@ function instagramapi($user, $endpoint, $snippet = '', $params = []) {
       $user = $tryUser;
     } else {
       $userInstagram = [
-        'token'     => c::get('plugin.instagram-api.default-token', $user),
+        'token'     => $user,
       ];
       $user = null;
     }
