@@ -152,26 +152,34 @@ Of course you can use the Page or Site Methods directly. Take a look at the [exa
 
 ### Use without extending a Kirby User (v0.7+)
 
-If you already have `account`, `userid` and `token` you can use this plugin without its Kirby User Field. Like it was suggested by @olach in [Issue #1](https://github.com/bnomei/kirby-instagram-api/issues/1).
-
-Use the Tag with `space` seperated values. 
+If you already have a `token` you can use this plugin without its Kirby User Field. Like it was suggested by @olach in [Issue #1](https://github.com/bnomei/kirby-instagram-api/issues/1). Just use your `token` instead of the username.
 
 ```
-(instagramapi: ACCOUNT USERID TOKEN endpoint: users/self/media/recent snippet: ia-example-media)
+(instagramapi: TOKEN endpoint: users/self/media/recent snippet: ia-example-media)
 ```
 
 ```php
-// as array
-$logindata = [
-	'account'   => 'ACCOUNT',
-    'userid'    => 'USERID',
-    'token'     => 'TOKEN',
-];
-// or as string
-$logindata = 'ACCOUNT USERID TOKEN';
-$result = $page->instagramapi($logindata, 'users/self/media/recent');
+$result = $page->instagramapi(TOKEN, 'users/self/media/recent');
 foreach($result['data'] as $data) { /*...*/ }
+```
 
+If you set the token in you `site/config/config.php` it will override all other means.
+
+```php
+c::set('plugin.instagram-api.token', 'TOKEN');
+```
+
+```
+(instagramapi: DoesNotMatter endpoint: users/self/media/recent snippet: ia-example-media)
+```
+
+```php
+// suggested
+$result = $page->instagramapi(c::get('plugin.instagram-api.token'), 'users/self/media/recent');
+// or even
+$result = $page->instagramapi('DoesNotMatter', 'users/self/media/recent');
+$result = $page->instagramapi(null, 'users/self/media/recent');
+foreach($result['data'] as $data) { /*...*/ }
 ```
 
 ## Other Setting
@@ -187,6 +195,10 @@ You can set these in your `site/config/config.php`.
 
 ### plugin.instagram-api.client-secret
 - get it from [Instagram Deverloper](https://www.instagram.com/developer/clients/manage/)
+
+### plugin.instagram-api.token
+- default: ''
+- set this if you want to ommit specifying the token.
 
 ### plugin.instagram-api.tag.endpoint
 - default: ''

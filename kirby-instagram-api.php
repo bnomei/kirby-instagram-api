@@ -65,29 +65,38 @@ function instagramapi($user, $endpoint, $snippet = '', $params = []) {
   $endpoint = trim($endpoint);
   $endpoint = rtrim($endpoint,'/');
   if(substr($endpoint, 0, 1) != '/') $endpoint = '/'.$endpoint;
-  
+
   // PARAMS
   if(!$params || gettype($params) != 'array') {
     $params = array();
   }
 
-  // USER
+  // TOKEN
   $userInstagram = null;
-  if(is_string($user)) {
-    if(str::contains($user, ' ')) {
-      $iad = explode(' ', $user); // see $account_ID_Token
-      if(count($iad) == 3) {
-        $userInstagram = [
-          'account'   => $iad[0],
-          'userid'    => $iad[1],
-          'token'     => $iad[2],
-          ];
-      }
+  $token = c::get('plugin.instagram-api.token', '');
+  if($token && strlen(trim($token)) > 0) {
+    $userInstagram = [
+      'account'   => '',
+      'userid'    => '',
+      'token'     => $token,
+    ];
+    $user = null;
+  }
+
+  // USER
+  if($user && is_string($user)) {
+    if($tryUser = site()->user($user)) {
+      $user = $tryUser;
     } else {
-      $user = site()->user($user);
+      $userInstagram = [
+        'account'   => '',
+        'userid'    => '',
+        'token'     => $token,
+      ];
+      $user = null;
     }
   }
-  if(is_a($user, 'User')) {
+  if($user && is_a($user, 'User')) {
     if($iad = $user->instagramapi()) {
       $iad = explode(' ', $iad); // see $account_ID_Token
       if(count($iad) == 3) {
@@ -99,10 +108,10 @@ function instagramapi($user, $endpoint, $snippet = '', $params = []) {
       }
     }
   }
-  if(is_array($user)) {
+  if($user && is_array($user)) {
     $userInstagram = $user;
   }
-
+  
   if(!$userInstagram || !is_array($userInstagram)) {
     return 'Invalid User.';
   }
