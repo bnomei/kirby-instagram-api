@@ -163,21 +163,20 @@ $result = $page->instagramapi(TOKEN, 'users/self/media/recent');
 foreach($result['data'] as $data) { /*...*/ }
 ```
 
-If you set the token in you `site/config/config.php` it will override all other means.
+If you set the token in you `site/config/config.php`. It will be used unless you provide a username or other token.
 
 ```php
-c::set('plugin.instagram-api.client-token', 'TOKEN');
+c::set('plugin.instagram-api.default-token', 'TOKEN');
 ```
 
 ```
-(instagramapi: DoesNotMatter endpoint: users/self/media/recent snippet: ia-example-media)
+(instagramapi: endpoint: users/self/media/recent snippet: ia-example-media)
 ```
 
 ```php
 // suggested
-$result = $page->instagramapi(c::get('plugin.instagram-api.client-token'), 'users/self/media/recent');
-// or even
-$result = $page->instagramapi('DoesNotMatter', 'users/self/media/recent');
+$result = $page->instagramapi(c::get('plugin.instagram-api.default-token'), 'users/self/media/recent');
+// but this will also work
 $result = $page->instagramapi(null, 'users/self/media/recent');
 foreach($result['data'] as $data) { /*...*/ }
 ```
@@ -196,7 +195,7 @@ You can set these in your `site/config/config.php`.
 ### plugin.instagram-api.client-secret
 - get it from [Instagram Deverloper](https://www.instagram.com/developer/clients/manage/)
 
-### plugin.instagram-api.client-token
+### plugin.instagram-api.default-token
 - default: ''
 - set this if you want to ommit specifying the token.
 

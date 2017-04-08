@@ -73,14 +73,9 @@ function instagramapi($user, $endpoint, $snippet = '', $params = []) {
 
   // TOKEN
   $userInstagram = null;
-  $token = c::get('plugin.instagram-api.client-token', '');
-  if($token && strlen(trim($token)) > 0) {
-    $userInstagram = [
-      'account'   => '',
-      'userid'    => '',
-      'token'     => $token,
-    ];
-    $user = null;
+  if(!$user) {
+    $user = c::get('plugin.instagram-api.default-token', '');
+    if(strlen(trim($user)) == 0) $user = null;
   }
 
   // USER
@@ -89,9 +84,7 @@ function instagramapi($user, $endpoint, $snippet = '', $params = []) {
       $user = $tryUser;
     } else {
       $userInstagram = [
-        'account'   => '',
-        'userid'    => '',
-        'token'     => $token,
+        'token'     => c::get('plugin.instagram-api.default-token', $user),
       ];
       $user = null;
     }
@@ -115,7 +108,7 @@ function instagramapi($user, $endpoint, $snippet = '', $params = []) {
   if(!$userInstagram || !is_array($userInstagram)) {
     return 'Invalid User.';
   }
-  $iamissing = a::missing($userInstagram, ['account','userid','token']);
+  $iamissing = a::missing($userInstagram, ['token']);
   if(count($iamissing) > 0) {
     return 'Missing Account values.';
   }
