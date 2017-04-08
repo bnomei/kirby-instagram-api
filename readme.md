@@ -19,7 +19,7 @@ Be aware that using the Instagram API has [rate limits](https://www.instagram.co
 - access [Instagram API Endpoints](https://www.instagram.com/developer/endpoints/)
 - use `snippets` to customize the output
 - simply extend existing Kirby CMS User-Accounts with [Kirby User Roles](https://getkirby.com/docs/panel/roles)
-- or use existing userid and token
+- or use existing token
 - includes helper to cache images
 
 ## Requirements
@@ -166,7 +166,7 @@ foreach($result['data'] as $data) { /*...*/ }
 If you set the token in you `site/config/config.php` it will override all other means.
 
 ```php
-c::set('plugin.instagram-api.token', 'TOKEN');
+c::set('plugin.instagram-api.client-token', 'TOKEN');
 ```
 
 ```
@@ -175,7 +175,7 @@ c::set('plugin.instagram-api.token', 'TOKEN');
 
 ```php
 // suggested
-$result = $page->instagramapi(c::get('plugin.instagram-api.token'), 'users/self/media/recent');
+$result = $page->instagramapi(c::get('plugin.instagram-api.client-token'), 'users/self/media/recent');
 // or even
 $result = $page->instagramapi('DoesNotMatter', 'users/self/media/recent');
 $result = $page->instagramapi(null, 'users/self/media/recent');
@@ -196,7 +196,7 @@ You can set these in your `site/config/config.php`.
 ### plugin.instagram-api.client-secret
 - get it from [Instagram Deverloper](https://www.instagram.com/developer/clients/manage/)
 
-### plugin.instagram-api.token
+### plugin.instagram-api.client-token
 - default: ''
 - set this if you want to ommit specifying the token.
 

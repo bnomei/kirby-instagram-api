@@ -73,7 +73,7 @@ function instagramapi($user, $endpoint, $snippet = '', $params = []) {
 
   // TOKEN
   $userInstagram = null;
-  $token = c::get('plugin.instagram-api.token', '');
+  $token = c::get('plugin.instagram-api.client-token', '');
   if($token && strlen(trim($token)) > 0) {
     $userInstagram = [
       'account'   => '',
