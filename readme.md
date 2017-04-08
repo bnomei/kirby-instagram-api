@@ -159,7 +159,7 @@ If you already have a `token` you can use this plugin without its Kirby User Fie
 ```
 
 ```php
-$result = $page->instagramapi(TOKEN, 'users/self/media/recent');
+$result = $page->instagramapi('TOKEN', 'users/self/media/recent');
 foreach($result['data'] as $data) { /*...*/ }
 ```
 
