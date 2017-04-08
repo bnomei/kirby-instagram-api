@@ -34,16 +34,16 @@ Once installed, configured and authorized you can output [your images](https://w
 
 use the Kirby-Tag
 ```
-(instagramapi: mykirbyusername endpoint: users/self/media/recent snippet: ia-example-media)
+(instagramapi: mykirbyusername_or_token endpoint: users/self/media/recent snippet: ia-example-media)
 ```
 
 or plain php
 ```php
 // snippet
-snippet('ia-example-media', ['user'=>'mykirbyusername', 'endpoint'=>'users/self/media/recent']);
+snippet('ia-example-media', ['user'=>'mykirbyusername_or_token', 'endpoint'=>'users/self/media/recent']);
 
 // page or site methods
-$result = $page->instagramapi('mykirbyusername', 'users/self/media/recent');
+$result = $page->instagramapi('mykirbyusername_or_token', 'users/self/media/recent');
 foreach($result['data'] as $data) { /*...*/ }
 ```
 
@@ -118,7 +118,7 @@ You can define your own subject and body-snippet for both emails using settings 
 ### Example: Using a Tag with Snippet show to Most-Recent-Media
 
 ```
-(instagramapi: mykirbyusername endpoint: users/self/media/recent snippet: ia-example-media)
+(instagramapi: mykirbyusername_or_token endpoint: users/self/media/recent snippet: ia-example-media)
 ```
 
 If you use the same snippet or endpoint everytime consider setting a default in your `site/config/config.php`.
@@ -131,7 +131,7 @@ c::set('plugin.instagram-api.tag.snippet', 'ia-example-media');
 This simplifies the Kirby-Tag call to:
 
 ```
-(instagramapi: mykirbyusername)
+(instagramapi: mykirbyusername_or_token)
 ```
 
 ### Example: Using a Snippet show to Most-Recent-Media
@@ -142,7 +142,7 @@ See `snippet` [ia-example-media](https://github.com/bnomei/kirby-instagram-api/b
 snippet('ia-example-media');
 
 // or if you want to override the defaults
-snippet('ia-example-media', ['user'=>'mykirbyusername', 'endpoint'=>'users/self/media/recent']);
+snippet('ia-example-media', ['user'=>'mykirbyusername_or_token', 'endpoint'=>'users/self/media/recent']);
 ```
 
 ### Example Page and Site Method
