@@ -20,6 +20,7 @@ Be aware that using the Instagram API has [rate limits](https://www.instagram.co
 - use `snippets` to customize the output
 - simply extend existing Kirby CMS User-Accounts with [Kirby User Roles](https://getkirby.com/docs/panel/roles)
 - or use existing token
+- responses can be cached
 - includes helper to cache images
 
 ## Requirements
@@ -188,6 +189,10 @@ You can set these in your `site/config/config.php`.
 ### plugin.instagram-api.license
 - default: ''
 - add your license here and the widget reminding you to buy one will disappear from the Panel.
+
+### plugin.instagram-api.cache (since v0.8+)
+- default: `0`
+- time in seconds to cache json responses to `/site/cache/`.
 
 ### plugin.instagram-api.client-id
 - get it from [Instagram Deverloper](https://www.instagram.com/developer/clients/manage/)

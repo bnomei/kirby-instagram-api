@@ -136,10 +136,31 @@ function instagramapi($user, $endpoint, $snippet = '', $params = []) {
   }
 
   $url = trim(implode('', $url));
+  $json = null;
 
-  $resp = instagramapi_simpleCurl($url);  
-  if($resp !== false && instagramapi_isJSON($resp)) {
-    $json = json_decode($resp, c::get('plugin.instagram-api.json_decode.assoc', true));
+  $cacheTimeout = intval(c::get('plugin.instagram-api.cache', 0));
+  $cacheFile = kirby()->roots()->cache().DS.md5($url).'.json';
+  $writeCache = false;
+  if($cacheTimeout > 0) {
+    if(f::exists($cacheFile) && 
+       f::modified($cacheFile) + $cacheTimeout > time()) {
+      $json = json_decode(f::read($cacheFile), c::get('plugin.instagram-api.json_decode.assoc', true));
+    } else {
+      $writeCache = true;
+    }
+  }
+
+  if(!$json) {
+    $resp = instagramapi_simpleCurl($url);  
+    if($resp !== false && instagramapi_isJSON($resp)) {
+      $json = json_decode($resp, c::get('plugin.instagram-api.json_decode.assoc', true));
+    }
+  }
+
+  if($json) {
+    if($writeCache) {
+      f::write($cacheFile, json_encode($json));
+    }
 
     // CATCH ERRORS or return JSON as array
     if($meta = a::get($json, 'meta')) {
