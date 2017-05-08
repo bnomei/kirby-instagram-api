@@ -443,6 +443,7 @@ $kirby->set('route',
               'https://api.instagram.com/oauth/authorize/',
               '?client_id=' . $clientid,
               '&response_type=code',
+              '&scope='.urlencode(c::get('plugin.instagram-api.scope', 'basic')),
               '&redirect_uri=' . $redirect, // last!
               ]);
 

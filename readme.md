@@ -200,6 +200,14 @@ You can set these in your `site/config/config.php`.
 ### plugin.instagram-api.client-secret
 - get it from [Instagram Deverloper](https://www.instagram.com/developer/clients/manage/)
 
+### plugin.instagram-api.scope (v0.9+)
+- default: `basic`
+- set this if you want to request a [different permission scope](https://www.instagram.com/developer/authorization/). Might need an *approved instgram app* not just a *sandbox app*.
+
+```php
+c::set('plugin.instagram-api.scope', 'public_content likes');
+```
+
 ### plugin.instagram-api.default-token
 - default: ''
 - set this if you want to ommit specifying the token.
