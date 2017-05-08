@@ -205,7 +205,7 @@ You can set these in your `site/config/config.php`.
 - set this if you want to request a [different permission scope](https://www.instagram.com/developer/authorization/). Might need an *approved instgram app* not just a *sandbox app*.
 
 ```php
-c::set('plugin.instagram-api.scope', 'public_content likes');
+c::set('plugin.instagram-api.scope', 'public_content+likes');
 ```
 
 ### plugin.instagram-api.default-token
