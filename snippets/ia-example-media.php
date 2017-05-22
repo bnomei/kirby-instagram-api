@@ -38,7 +38,7 @@
 		$result = site()->instagramapi($user, $endpoint);
 
 		// with params if you need them
-		// $result = $site->instagramapi($user, 'media/recent', ['count' => 10]);
+		// $result = $site->instagramapi($user, 'media/recent', '', ['count' => 10]);
 	}
 	
 	/////////////////////////////////////
