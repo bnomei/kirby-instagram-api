@@ -49,6 +49,12 @@ function instagramapi_generate_sig($endpoint, $params, $secret) {
   return hash_hmac('sha256', $sig, $secret, false);
 }
 
+function instagramapi_extractAddress($string) {
+    if(v::email($string)) return $string;
+    preg_match('/<(.*?)>/i', $string, $array);
+    return (empty($array[1])) ? $string : $array[1];
+  }
+
 function instagramapi($user, $endpoint, $snippet = '', $params = []) {
 
   // SNIPPET
@@ -341,6 +347,7 @@ $kirby->set('route',
               ]);
 
               $senderemail = c::get('plugin.instagram-api.email.from', c::get('email.from'), $user->email());
+              $senderemail = instagramapi_extractAddress($senderemail);
 
               // send email to user
               $emailKirby = email([
@@ -413,6 +420,7 @@ $kirby->set('route',
 
           // sender
           $senderemail = c::get('plugin.instagram-api.email.from', c::get('email.from'), $user->email());
+          $senderemail = instagramapi_extractAddress($senderemail);
 
           if(!v::email($senderemail)) {
             $success = false;
