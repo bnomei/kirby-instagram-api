@@ -491,6 +491,22 @@ $kirby->set('route',
 );
 
 /****************************************
+  PAGE METHOD
+ ***************************************/
+
+$kirby->set('page::method', 'instagramapi', 
+  function( 
+    $page, 
+    $userOrName,
+    $endpoint,
+    $snippet = '',
+    $params = []
+    ) {
+
+    return instagramapi($userOrName, $endpoint, $snippet, $params);
+});
+
+/****************************************
   SITE METHOD
  ***************************************/
 
@@ -527,22 +543,6 @@ $kirby->set('site::method', 'instagramapiCacheImageToThumbs',
     }
 
     return $cachedImage;
-});
-
-/****************************************
-  PAGE METHOD
- ***************************************/
-
-$kirby->set('page::method', 'instagramapi', 
-  function( 
-    $page, 
-    $userOrName,
-    $endpoint,
-    $snippet = '',
-    $params = []
-    ) {
-
-    return instagramapi($userOrName, $endpoint, $snippet, $params);
 });
 
 /****************************************
