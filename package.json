@@ -1,7 +1,7 @@
 {
   "name": "kirby-instagram-api",
   "description": "Kirby CMS User-Field, Tag and Page Method to access Instagram API Endpoints. This is a boilerplate to create your own Instagram embeds.",
-  "version": "0.9.3",
+  "version": "0.9.4",
   "type": "kirby-plugin",
   "license": "Commercial",
   "author": "Bruno Meilick"

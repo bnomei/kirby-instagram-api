@@ -23,7 +23,7 @@ function instagramapi_simpleCurl($url, $method='GET', $data = null, $json = fals
   $resp = curl_exec($ch);
 
   if($resp === false) {
-    die('Error: "' . curl_error($ch) . '" - Code: ' . curl_errno($ch));
+    throw new Exception('Error: "' . curl_error($ch) . '" - Code: ' . curl_errno($ch));
     return false;
   } else {
     $c = curl_getinfo($ch, CURLINFO_HTTP_CODE);
@@ -61,7 +61,7 @@ function instagramapi($user, $endpoint, $snippet = '', $params = []) {
   if(!$snippet || strlen(trim($snippet)) == 0) {
     $snippet = null;
   }
-  
+
   // SECRET
   $secret = c::get('plugin.instagram-api.client-secret', false);
   if(!$secret) return 'Missing Instagram API Secret.';
@@ -110,7 +110,7 @@ function instagramapi($user, $endpoint, $snippet = '', $params = []) {
   if($user && is_array($user)) {
     $userInstagram = $user;
   }
-  
+
   if(!$userInstagram || !is_array($userInstagram)) {
     return 'Invalid User.';
   }
@@ -121,7 +121,7 @@ function instagramapi($user, $endpoint, $snippet = '', $params = []) {
 
   // PARAMS
   $params = array_merge($params, ['access_token' => $userInstagram['token']]);
-  
+
   $url  = [
     c::get('plugin.instagram-api.endpoint-root', 'https://api.instagram.com/v1'),
     $endpoint,
@@ -148,7 +148,7 @@ function instagramapi($user, $endpoint, $snippet = '', $params = []) {
   $cacheFile = kirby()->roots()->cache().DS.md5($url).'.json';
   $writeCache = false;
   if($cacheTimeout > 0) {
-    if(f::exists($cacheFile) && 
+    if(f::exists($cacheFile) &&
        f::modified($cacheFile) + $cacheTimeout > time()) {
       $json = json_decode(f::read($cacheFile), c::get('plugin.instagram-api.json_decode.assoc', true));
     } else {
@@ -157,10 +157,10 @@ function instagramapi($user, $endpoint, $snippet = '', $params = []) {
   }
 
   if(!$json) {
-    $resp = instagramapi_simpleCurl($url);  
-    if($resp !== false && instagramapi_isJSON($resp)) {
-      $json = json_decode($resp, c::get('plugin.instagram-api.json_decode.assoc', true));
-    }
+      $resp = instagramapi_simpleCurl($url); // might throw exception which kirby template can catch
+      if($resp !== false && instagramapi_isJSON($resp)) {
+        $json = json_decode($resp, c::get('plugin.instagram-api.json_decode.assoc', true));
+      }
   }
 
   if($json) {
@@ -174,7 +174,7 @@ function instagramapi($user, $endpoint, $snippet = '', $params = []) {
       if($metaCode == 200) {
         if($snippet) {
           return snippet($snippet, [
-              'snippetByTag'  => true, 
+              'snippetByTag'  => true,
               'result'        => $json
             ], true);
         } else {
@@ -208,7 +208,7 @@ function instagramapi($user, $endpoint, $snippet = '', $params = []) {
 $snippets = new Folder(__DIR__ . '/snippets');
 foreach ($snippets->files() as $file) {
   if($file->extension() == 'php') {
-    $kirby->set('snippet', $file->name(), $file->root());  
+    $kirby->set('snippet', $file->name(), $file->root());
   }
 }
 
@@ -225,7 +225,7 @@ $kirby->set('field', 'instagramapidata', __DIR__ . '/fields/instagramapidata');
 $blueprints = new Folder(__DIR__ . '/blueprints/fields');
 foreach ($blueprints->files() as $file) {
   if($file->extension() == 'yml') {
-    $kirby->set('blueprint', 'fields/'.$file->name(), $file->root());  
+    $kirby->set('blueprint', 'fields/'.$file->name(), $file->root());
   }
 }
 
@@ -260,7 +260,7 @@ email::$services['instagramapi-html'] = function($email) {
   ROUTES
  ***************************************/
 
-$kirby->set('route', 
+$kirby->set('route',
   array(
       'pattern' => 'kirby-instagram-api/redirect',
       'action' => function() {
@@ -277,7 +277,7 @@ $kirby->set('route',
         // get code and possible errors from $all
         // http://your-redirect-uri?code=CODE
         // http://your-redirect-uri?error=access_denied&error_reason=user_denied&error_description=The+user+denied+your+request
-        
+
         $code = get('code');
         $username = null;
         $timeout = null;
@@ -303,7 +303,7 @@ $kirby->set('route',
         if($timeout != $tcheck) {
           return go(site()->homepage()->url() . '#link-expired');
         }
-        
+
         // STEP 3: curl the token
         // instagram api
         $redirect = implode([
@@ -318,75 +318,80 @@ $kirby->set('route',
             'client_secret' => $clientsecret,
             'grant_type'    => 'authorization_code'
         ];
-        $response = instagramapi_simpleCurl('https://api.instagram.com/oauth/access_token', 'POST', $request);
-        if($response !== false && instagramapi_isJSON($response)) {
-          $json = json_decode($response);
-          /*
-          {
-            "access_token": "fb2e77d.47a0479900504cb3ab4a1f626d174d2d",
-            "user": {
-                "id": "1574083",
-                "username": "snoopdogg",
-                "full_name": "Snoop Dogg",
-                "profile_picture": "..."
+
+        try { // curl instagram
+          $response = instagramapi_simpleCurl('https://api.instagram.com/oauth/access_token', 'POST', $request);
+          if($response !== false && instagramapi_isJSON($response)) {
+            $json = json_decode($response);
+            /*
+            {
+              "access_token": "fb2e77d.47a0479900504cb3ab4a1f626d174d2d",
+              "user": {
+                  "id": "1574083",
+                  "username": "snoopdogg",
+                  "full_name": "Snoop Dogg",
+                  "profile_picture": "..."
+              }
             }
-          }
-         */
-          if(isset($json->access_token) ** isset($json->user)) {
-            // if success update the field with space-seperated: username id access_token
-            try {
+            */
+            if(isset($json->access_token) ** isset($json->user)) {
+              // if success update the field with space-seperated: username id access_token
+              try { // update user
 
-              $account_ID_Token = implode(' ', [
-                $json->user->username,
-                $json->user->id,
-                $json->access_token,
-              ]);
-
-              $user->update([
-                'instagramapi' => $account_ID_Token,
-              ]);
-
-              $senderemail = c::get('plugin.instagram-api.email.from', c::get('email.from'), $user->email());
-              $senderemail = instagramapi_extractAddress($senderemail);
-
-              // send email to user
-              $emailKirby = email([
-                'to'      => $user->email(),
-                'from'    => $senderemail,
-                'subject' => c::get('plugin.instagram-api.email-success.subject', c::get('email.subject', 'Kirby CMS InstagramAPI Plugin: Authorization Email')),
-                'body'    => snippet(c::get('plugin.instagram-api.email-success.body-snippet', 'instagramapi-email-success-body'),[
-                    'user'        => $user, 
-                    'account'     => trim($json->user->username),
-                    'data'        => $account_ID_Token,
-                  ],true),
-                'service' => c::get('plugin.instagram-api.service', c::get('email.service', 'instagramapi-html')),
+                $account_ID_Token = implode(' ', [
+                  $json->user->username,
+                  $json->user->id,
+                  $json->access_token,
                 ]);
-              try{
-                if (!$emailKirby || !$emailKirby->send()) {
-                  throw new Error('The email to '.$email.' could not be sent.');
-                }
-              }
-              catch (Error $e) {
-                $message = $e->getMessage().' ';
-                return go(site()->homepage()->url() . '#error=email-failed');
-              }
 
-              return go(site()->homepage()->url() . '#instagram=authorized');
+                $user->update([
+                  'instagramapi' => $account_ID_Token,
+                ]);
+
+                $senderemail = c::get('plugin.instagram-api.email.from', c::get('email.from'), $user->email());
+                $senderemail = instagramapi_extractAddress($senderemail);
+
+                // send email to user
+                $emailKirby = email([
+                  'to'      => $user->email(),
+                  'from'    => $senderemail,
+                  'subject' => c::get('plugin.instagram-api.email-success.subject', c::get('email.subject', 'Kirby CMS InstagramAPI Plugin: Authorization Email')),
+                  'body'    => snippet(c::get('plugin.instagram-api.email-success.body-snippet', 'instagramapi-email-success-body'),[
+                      'user'        => $user,
+                      'account'     => trim($json->user->username),
+                      'data'        => $account_ID_Token,
+                    ],true),
+                  'service' => c::get('plugin.instagram-api.service', c::get('email.service', 'instagramapi-html')),
+                  ]);
+                try { // send email
+                  if (!$emailKirby || !$emailKirby->send()) {
+                    throw new Error('The email to '.$email.' could not be sent.');
+                  }
+                }
+                catch (Error $e) {  // send email
+                  $message = $e->getMessage().' ';
+                  return go(site()->homepage()->url() . '#error=email-failed');
+                }
+
+                return go(site()->homepage()->url() . '#instagram=authorized');
+              }
+              catch(Exception $ex) {  // update user
+                return go(site()->homepage()->url() . '#error=update-user-failed');
+              }
+            } else {
+              return go(site()->homepage()->url() . '#error=invalid-redirect');
             }
-            catch(Exception $ex) {
-              $error = urlencode($ex->getMessage());
-            }
-          } else {
-            $error = 'invalid-redirect';
           }
         }
-        
+        catch(Exception $ex) {  // curl instagram or any other
+          $error = urlencode($ex->getMessage());
+        }
         return go(site()->homepage()->url() . '#error='.$error);
     }
   )
 );
 
-$kirby->set('route', 
+$kirby->set('route',
   array(
       'pattern' => 'kirby-instagram-api/email/(:any)/(:any)/(:any)',
       'action' => function($username, $secret, $ajax) {
@@ -397,7 +402,7 @@ $kirby->set('route',
           if($secret != sha1(kirby()->roots()->index().date('YmdH').$username)) {
             $success = false;
             $message = 'Timeout – try again. ';
-          } 
+          }
 
           // js only PARAMs
           if($ajax != 'ajax') {
@@ -461,11 +466,11 @@ $kirby->set('route',
                 'from'    => $senderemail,
                 'subject' => c::get('plugin.instagram-api.email-request.subject', c::get('email.subject', 'Kirby CMS InstagramAPI Plugin: Authorization Email')),
                 'body'    => snippet(c::get('plugin.instagram-api.email-request.body-snippet', 'instagramapi-email-request-body'),[
-                    'user'        => $user, 
+                    'user'        => $user,
                     //'account'     => $account,
                     'link'        => $link,
                   ],true),
-                'service' => c::get('plugin.instagram-api.service', c::get('email.service', 'instagramapi-html')),
+                'service' => c::get('plugin.(instagram)-api.service', c::get('email.service', 'instagramapi-html')),
                 ]);
             try{
               if (!$emailKirby || !$emailKirby->send()) {
@@ -494,9 +499,9 @@ $kirby->set('route',
   PAGE METHOD
  ***************************************/
 
-$kirby->set('page::method', 'instagramapi', 
-  function( 
-    $page, 
+$kirby->set('page::method', 'instagramapi',
+  function(
+    $page,
     $userOrName,
     $endpoint,
     $snippet = '',
@@ -510,9 +515,9 @@ $kirby->set('page::method', 'instagramapi',
   SITE METHOD
  ***************************************/
 
-$kirby->set('site::method', 'instagramapi', 
-  function( 
-    $site, 
+$kirby->set('site::method', 'instagramapi',
+  function(
+    $site,
     $userOrName,
     $endpoint,
     $snippet = '',
@@ -522,9 +527,9 @@ $kirby->set('site::method', 'instagramapi',
     return instagramapi($userOrName, $endpoint, $snippet, $params);
 });
 
-$kirby->set('site::method', 'instagramapiCacheImageToThumbs', 
-  function( 
-    $site, 
+$kirby->set('site::method', 'instagramapiCacheImageToThumbs',
+  function(
+    $site,
     $imgurl
     ) {
 
@@ -560,7 +565,7 @@ $kirby->set('tag', 'instagramapi', array(
     $endpoint = c::get('plugin.instagram-api.tag.endpoint', (string)$tag->attr('endpoint'));
     $snippet = c::get('plugin.instagram-api.tag.snippet', (string)$tag->attr('snippet'));
     $params = array();
-    
+
     return instagramapi($userOrName, $endpoint, $snippet, $params);
   }
 ));
