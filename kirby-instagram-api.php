@@ -334,7 +334,7 @@ $kirby->set('route',
               }
             }
             */
-            if(isset($json->access_token) ** isset($json->user)) {
+            if(isset($json->access_token) && isset($json->user)) {
               // if success update the field with space-seperated: username id access_token
               try { // update user
 
